@@ -1,0 +1,6 @@
+22:01:12,280 ERROR [main] portico.lrc: No response from RTI (null) for message type: CreateFederation
+hla.rti.RTIinternalError: No response from RTI (null) for message type: CreateFederation
+	at org.portico.impl.hla13.Rti13Ambassador.processMessage(Rti13Ambassador.java:5830) [portico.jar:?]
+	at org.portico.impl.hla13.Rti13Ambassador.createFederationExecution(Rti13Ambassador.java:196) [portico.jar:?]
+	at hla13.Example13Federate.runFederate(Example13Federate.java:184) [java-hla13.jar:?]
+	at hla13.Example13Federate.main(Example13Federate.java:563) [java-hla13.jar:?]
