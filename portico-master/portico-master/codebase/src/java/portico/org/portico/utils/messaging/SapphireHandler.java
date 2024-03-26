@@ -12,7 +12,7 @@ import org.portico.utils.messaging.IMessageHandler;
 import org.portico.utils.messaging.MessageContext;
 import org.portico.lrc.LRCMessageHandler;
 import org.portico.lrc.compat.JConfigurationException;
-
+import org.portico2.common.messaging.MessageType;
 
 public class SapphireHandler extends LRCMessageHandler implements IMessageHandler {
 
@@ -34,12 +34,30 @@ public class SapphireHandler extends LRCMessageHandler implements IMessageHandle
 	public void process(MessageContext context ) throws Exception {
 		//Inspect MessageContext for methods to call and fields to inspect.
 		//Barebones Implementation do nothing.
-		System.out.println("There is nothing to see here...");
+		//Process the message type Create Federation.
+		PorticoMessage myMessage = context.getRequest();
+		ResponseMessage myRespone = context.getResponse();
+
+		MessageType decisionType = myMessage.getType();
+		//First Exception at CreateFederation is value 3 as defined in MessageType Enum
+		switch (decisionType) {
+			case CreateFederation:
+				System.out.println("getSourceFederate = "+String.valueOf(myMessage.getSourceFederate()));
+				System.out.println("getTargetFederate = "+String.valueOf(myMessage.getTargetFederate()));
+				System.out.println("getTargetFederation = "+String.valueOf(myMessage.getTargetFederation()));
+				System.out.println("getTimeStamp = "+String.valueOf(myMessage.getTimestamp()));
+				System.out.println("Is Immediate processing required? "+String.valueOf(myMessage.isImmediateProcessingRequired()));
+				break;
+		}
 	}
 
 	public String getName(){
 
-		return "Text Message";
+		if (!this.name.equalsIgnoreCase("")){
+			return "EmptyName";
+		}
+		else
+			return this.name;
 	}
 
 	public void setName(String name){
@@ -48,7 +66,7 @@ public class SapphireHandler extends LRCMessageHandler implements IMessageHandle
 			this.name = name;
 		}
 		else {
-			this.name = "Sapphire Studios!";
+			this.name = "SapphireStudios";
 		}
 	}
 
