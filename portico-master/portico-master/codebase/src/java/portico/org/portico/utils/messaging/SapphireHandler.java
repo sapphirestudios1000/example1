@@ -8,6 +8,8 @@
 package org.portico.utils.messaging;
 
 import java.util.Map;
+import java.util.HashMap;
+import java.io.ObjectOutputStream;
 import org.portico.utils.messaging.IMessageHandler;
 import org.portico.utils.messaging.MessageContext;
 import org.portico.lrc.LRCMessageHandler;
@@ -23,12 +25,19 @@ public class SapphireHandler extends LRCMessageHandler implements IMessageHandle
 
 	public static String name;
 	public static int priority_local;
-
+	public static HashMap<String,Object> messageProperties = new HashMap<String,Object>();
 
 	public void initialize(Map<String,Object> properties) throws JConfigurationException {
 		//Inspect the LRC Message Handler for more useful things to do here and how it's relevant to
 		//what your doing and why you're doing it.	
-		System.out.println("Init: Hello World.");	
+		System.out.println("Init: Hello World.");
+		for (Map.Entry<String,Object> pair : properties.entrySet()){
+			//System.out.println("Key = "+pair.getKey());
+			//System.out.println("ValueName = "+pair.getValue().toString());	
+			messageProperties.put(pair.getKey(),pair.getValue());
+			System.out.println("Populated messageProperties with Key "+pair.getKey().toString()+" and Value "+pair.getValue().toString());
+	}
+	//this.messageProperties = properties;
 	}	
 
 	public void process(MessageContext context ) throws Exception {
@@ -36,7 +45,7 @@ public class SapphireHandler extends LRCMessageHandler implements IMessageHandle
 		//Barebones Implementation do nothing.
 		//Process the message type Create Federation.
 		PorticoMessage myMessage = context.getRequest();
-		ResponseMessage myRespone = context.getResponse();
+		ResponseMessage myResponse = context.getResponse();
 
 		MessageType decisionType = myMessage.getType();
 		//First Exception at CreateFederation is value 3 as defined in MessageType Enum
@@ -47,6 +56,19 @@ public class SapphireHandler extends LRCMessageHandler implements IMessageHandle
 				System.out.println("getTargetFederation = "+String.valueOf(myMessage.getTargetFederation()));
 				System.out.println("getTimeStamp = "+String.valueOf(myMessage.getTimestamp()));
 				System.out.println("Is Immediate processing required? "+String.valueOf(myMessage.isImmediateProcessingRequired()));
+				System.out.println("IsFromRti = "+String.valueOf(myMessage.isFromRti()));	
+				//System.out.println("Respone Message Name = "+myResponse.toString());
+				
+				System.out.println("Setting up the Federation...");
+				myMessage.setTargetFederation(1);
+				myMessage.setTimestamp(1.0);				
+				myMessage.setTargetFederate(1000);
+			
+				//ExtendedSuccessMessage myGo = new ExtendedSuccessMessage();	
+				ExtendedSuccessMessage myGoResponse = new ExtendedSuccessMessage(messageProperties);
+				//myResponse.setResult(myGoResponse);	
+				context.setRequest(myMessage);	
+				context.setResponse(myGoResponse);		
 				break;
 		}
 	}
