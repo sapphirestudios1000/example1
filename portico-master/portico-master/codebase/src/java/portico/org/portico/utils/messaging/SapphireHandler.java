@@ -26,6 +26,9 @@ public class SapphireHandler extends LRCMessageHandler implements IMessageHandle
 	public static String name;
 	public static int priority_local;
 	public static HashMap<String,Object> messageProperties = new HashMap<String,Object>();
+	public static HashMap<String,Object> resultCreateMap = new HashMap<String,Object>();
+	public static HashMap<String,Object> resultJoinMap = new HashMap<String,Object>();
+	public static HashMap<String,Object> resultSyncMap = new HashMap<String,Object>();
 
 	public void initialize(Map<String,Object> properties) throws JConfigurationException {
 		//Inspect the LRC Message Handler for more useful things to do here and how it's relevant to
@@ -59,17 +62,41 @@ public class SapphireHandler extends LRCMessageHandler implements IMessageHandle
 				System.out.println("IsFromRti = "+String.valueOf(myMessage.isFromRti()));	
 				//System.out.println("Respone Message Name = "+myResponse.toString());
 				
-				System.out.println("Setting up the Federation...");
+				System.out.println("Setting up the Sapphire Federation...");
 				myMessage.setTargetFederation(1);
 				myMessage.setTimestamp(1.0);				
 				myMessage.setTargetFederate(1000);
-			
+				messageProperties.put("Fed_Name","Sapphire Federation");	
 				//ExtendedSuccessMessage myGo = new ExtendedSuccessMessage();	
-				ExtendedSuccessMessage myGoResponse = new ExtendedSuccessMessage(messageProperties);
+				resultCreateMap.put("result",messageProperties);	
+				ExtendedSuccessMessage myGoResponse = new ExtendedSuccessMessage(resultCreateMap);
 				//myResponse.setResult(myGoResponse);	
 				context.setRequest(myMessage);	
 				context.setResponse(myGoResponse);		
 				break;
+			case JoinFederation:
+				System.out.println("Joining Sapphire Federation...");
+				System.out.println("Federation Name: "+String.valueOf(messageProperties.get("Fed_Name")));
+				System.out.println("Get Target Federation = "+String.valueOf(myMessage.getTargetFederation()));
+				System.out.println("Get Time Stamp = "+String.valueOf(myMessage.getTimestamp()));
+				System.out.println("Get Target Federate = "+String.valueOf(myMessage.getTargetFederate()));
+				
+				myMessage.setTargetFederation(1);
+				myMessage.setTimestamp(1.0);
+				myMessage.setTargetFederate(1000);
+				resultJoinMap.put("result",1);	
+
+				ExtendedSuccessMessage myJoin = new ExtendedSuccessMessage(resultJoinMap);
+				context.setRequest(myMessage);
+				context.setResponse(myJoin);
+
+				break;
+			case RegisterSyncPoint:
+				resultSyncMap.put("result","test");
+				ExtendedSuccessMessage mySync = new ExtendedSuccessMessage(resultSyncMap);
+				context.setRequest(myMessage);
+				context.setResponse(mySync);
+				break;				
 		}
 	}
 
